@@ -10,7 +10,6 @@ app.use(express.json());
 const uri =
   "mongodb+srv://moinul45777:qxl22HBK0kFl0RUp@moinul.ciuiphx.mongodb.net/?appName=Moinul";
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -24,9 +23,17 @@ async function run() {
     await client.connect();
 
     const db = client.db("eco-step_db");
+
+    // Collections
     const tipsCollection = db.collection("tips");
+    const eventsCollection = db.collection("events");
 
     app.get("/tips", async (req, res) => {
+      const cursor = tipsCollection.find().limit(3);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    app.get("/events", async (req, res) => {
       const cursor = tipsCollection.find().limit(3);
       const result = await cursor.toArray();
       res.send(result);
