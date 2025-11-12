@@ -31,12 +31,12 @@ async function run() {
 
     // All GET APIs
     app.get("/tips", async (req, res) => {
-      const cursor = tipsCollection.find().limit(5);
+      const cursor = tipsCollection.find().sort({ createdAt: 1 });
       const result = await cursor.toArray();
       res.send(result);
     });
     app.get("/events", async (req, res) => {
-      const cursor = eventsCollection.find().limit(4);
+      const cursor = eventsCollection.find().sort({ date: 1 });
       const result = await cursor.toArray();
       res.send(result);
     });
