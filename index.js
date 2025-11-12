@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -29,13 +29,14 @@ async function run() {
     const eventsCollection = db.collection("events");
     const challengesCollection = db.collection("challenges");
 
+    // All GET APIs
     app.get("/tips", async (req, res) => {
-      const cursor = tipsCollection.find().limit(3);
+      const cursor = tipsCollection.find().limit(5);
       const result = await cursor.toArray();
       res.send(result);
     });
     app.get("/events", async (req, res) => {
-      const cursor = eventsCollection.find().limit(3);
+      const cursor = eventsCollection.find().limit(4);
       const result = await cursor.toArray();
       res.send(result);
     });
@@ -58,6 +59,22 @@ async function run() {
 
       const cursor = challengesCollection.find(query);
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // All PATCH APIs
+    app.patch("/tips/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedTip = req.body;
+      const query = { _id: new ObjectId(id) };
+      const update = {
+        $set: {
+          upvotes: updatedTip.upvotes,
+        },
+      };
+
+      const options = {};
+      const result = await tipsCollection.updateOne(query, update, options);
       res.send(result);
     });
   } finally {
