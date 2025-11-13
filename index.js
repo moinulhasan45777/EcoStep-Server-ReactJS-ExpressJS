@@ -29,6 +29,13 @@ async function run() {
     const eventsCollection = db.collection("events");
     const challengesCollection = db.collection("challenges");
 
+    // ALL POST APIs
+    app.post("/challenges", async (req, res) => {
+      const newChallenge = req.body;
+      const result = await challengesCollection.insertOne(newChallenge);
+      res.send(result);
+    });
+
     // All GET APIs
     app.get("/tips", async (req, res) => {
       const cursor = tipsCollection.find().sort({ createdAt: 1 });
