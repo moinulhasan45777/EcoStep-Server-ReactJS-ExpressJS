@@ -70,11 +70,10 @@ async function run() {
       if (req.query.endDate) {
         query.endDate = { $lte: req.query.endDate };
       }
-      if (req.query.participants) {
-        query.partifipants = { $lte: req.query.participants };
+      if (parseInt(req.query.participant) > 0) {
+        query.participants = { $lte: parseInt(req.query.participant) };
+        console.log(query);
       }
-
-      console.log(query);
 
       const cursor = challengesCollection.find(query);
       const result = await cursor.toArray();
@@ -101,6 +100,53 @@ async function run() {
 
       const options = {};
       const result = await tipsCollection.updateOne(query, update, options);
+      res.send(result);
+    });
+    app.patch("/challenges/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedParticipants = req.body;
+      const query = { _id: new ObjectId(id) };
+      const update = {
+        $set: {
+          participants: updatedParticipants.participants,
+        },
+      };
+    });
+
+    app.patch("/challenges/update/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedChallenge = req.body;
+      const query = { _id: new ObjectId(id) };
+      const update = {
+        $set: {
+          title: updatedChallenge.title,
+          category: updatedChallenge.category,
+          description: updatedChallenge.description,
+          duration: updatedChallenge.duration,
+          target: updatedChallenge.target,
+          participants: updatedChallenge.participants,
+          impactMetric: updatedChallenge.impactMetric,
+          createdBy: updatedChallenge.createdBy,
+          startDate: updatedChallenge.startDate,
+          endDate: updatedChallenge.endDate,
+          imageUrl: updatedChallenge.imageUrl,
+        },
+      };
+
+      const options = {};
+      const result = await challengesCollection.updateOne(
+        query,
+        update,
+        options
+      );
+      res.send(result);
+    });
+
+    // All DELETE APIs
+    app.delete("/challenges/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await challengesCollection.deleteOne(query);
       res.send(result);
     });
   } finally {
