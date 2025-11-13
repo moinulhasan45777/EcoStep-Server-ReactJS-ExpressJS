@@ -88,6 +88,26 @@ async function run() {
     });
 
     // All PATCH APIs
+    app.patch("/user-challenges/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedChallenge = req.body;
+      const query = { _id: new ObjectId(id) };
+      const update = {
+        $set: {
+          status: updatedChallenge.status,
+          progress: updatedChallenge.progress,
+        },
+      };
+
+      const options = {};
+      const result = await userChallengeCollection.updateOne(
+        query,
+        update,
+        options
+      );
+      res.send(result);
+    });
+
     app.patch("/tips/:id", async (req, res) => {
       const id = req.params.id;
       const updatedTip = req.body;
@@ -111,6 +131,13 @@ async function run() {
           participants: updatedParticipants.participants,
         },
       };
+      const options = {};
+      const result = await challengesCollection.updateOne(
+        query,
+        update,
+        options
+      );
+      res.send(result);
     });
 
     app.patch("/challenges/update/:id", async (req, res) => {
