@@ -53,12 +53,20 @@ async function run() {
         query.endDate = { $lte: req.query.endDate };
       }
       if (req.query.participants) {
-        query.participants.$gte = { $gte: 0 };
-        query.participants.$lte = { $lte: parseInt(req.query.participants) };
+        query.partifipants = { $lte: req.query.participants };
       }
+
+      console.log(query);
 
       const cursor = challengesCollection.find(query);
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/challenges/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await challengesCollection.findOne(query);
       res.send(result);
     });
 
