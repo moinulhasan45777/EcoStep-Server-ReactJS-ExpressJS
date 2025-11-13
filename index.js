@@ -28,11 +28,17 @@ async function run() {
     const tipsCollection = db.collection("tips");
     const eventsCollection = db.collection("events");
     const challengesCollection = db.collection("challenges");
+    const userChallengeCollection = db.collection("userChallenges");
 
     // ALL POST APIs
     app.post("/challenges", async (req, res) => {
+      const newUserChallenge = req.body;
+      const result = await challengesCollection.insertOne(newUserChallenge);
+      res.send(result);
+    });
+    app.post("/challenges/join/:id", async (req, res) => {
       const newChallenge = req.body;
-      const result = await challengesCollection.insertOne(newChallenge);
+      const result = await userChallengeCollection.insertOne(newChallenge);
       res.send(result);
     });
 
@@ -44,6 +50,11 @@ async function run() {
     });
     app.get("/events", async (req, res) => {
       const cursor = eventsCollection.find().sort({ date: 1 });
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    app.get("/user-challenges", async (req, res) => {
+      const cursor = userChallengeCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
